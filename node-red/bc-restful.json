@@ -1,0 +1,265 @@
+[
+    {
+        "id": "dd5d59.316c22a8",
+        "type": "catch",
+        "z": "4571375.9cd3bc8",
+        "name": "",
+        "scope": null,
+        "x": 540,
+        "y": 40,
+        "wires": [
+            [
+                "b2701b1b.bbe2d8"
+            ]
+        ]
+    },
+    {
+        "id": "b2701b1b.bbe2d8",
+        "type": "debug",
+        "z": "4571375.9cd3bc8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 670,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "fe0b51d9.f20598",
+        "type": "sqlite",
+        "z": "4571375.9cd3bc8",
+        "mydb": "8e6cb0b3.5c7228",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "db",
+        "x": 410,
+        "y": 120,
+        "wires": [
+            [
+                "12ca964e.34ac6a"
+            ]
+        ]
+    },
+    {
+        "id": "32846c7e.c97744",
+        "type": "http in",
+        "z": "4571375.9cd3bc8",
+        "name": "/tags (GET)",
+        "url": "searchcamp/api/tags",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 100,
+        "wires": [
+            [
+                "15cac769.992621"
+            ]
+        ]
+    },
+    {
+        "id": "15cac769.992621",
+        "type": "function",
+        "z": "4571375.9cd3bc8",
+        "name": "SELECT",
+        "func": "msg.topic = `SELECT tag, COUNT(*) AS c\n    FROM url_tag\n    GROUP BY tag\n    HAVING c > 2\n    ORDER BY c DESC`;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 260,
+        "y": 100,
+        "wires": [
+            [
+                "fe0b51d9.f20598"
+            ]
+        ]
+    },
+    {
+        "id": "a651ac96.c4241",
+        "type": "http response",
+        "z": "4571375.9cd3bc8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 690,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "390b4bf9.9282c4",
+        "type": "comment",
+        "z": "4571375.9cd3bc8",
+        "name": "listen to RESTful methods",
+        "info": "",
+        "x": 130,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "12ca964e.34ac6a",
+        "type": "function",
+        "z": "4571375.9cd3bc8",
+        "name": "json header",
+        "func": "// If sending JSON data the content type is:\nmsg.headers={\"Content-Type\":\"application/json\"}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 550,
+        "y": 120,
+        "wires": [
+            [
+                "a651ac96.c4241"
+            ]
+        ]
+    },
+    {
+        "id": "f7491097.26c018",
+        "type": "http in",
+        "z": "4571375.9cd3bc8",
+        "name": "/tags (POST)",
+        "url": "searchcamp/api/tags",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 140,
+        "wires": [
+            [
+                "3397553c.88d29a"
+            ]
+        ]
+    },
+    {
+        "id": "3397553c.88d29a",
+        "type": "function",
+        "z": "4571375.9cd3bc8",
+        "name": "SELECT",
+        "func": "// parsing body params\nvar tagsArray = JSON.parse(msg.req.body.tags);\nvar tagsStr = \"'\" + tagsArray.join(\"', '\") + \"'\";\n\n// SQL query\nmsg.topic = `SELECT Tag, COUNT(*) AS c\n    FROM url_tag\n    WHERE Url IN (\n        SELECT Url FROM url_tag\n        WHERE Tag IN (${tagsStr})\n    )\n    AND Tag NOT IN (${tagsStr})\n    GROUP BY Tag\n    ORDER BY c DESC`;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 260,
+        "y": 140,
+        "wires": [
+            [
+                "fe0b51d9.f20598",
+                "56c56f0b.998ba8"
+            ]
+        ]
+    },
+    {
+        "id": "3a446ffa.ee5ef8",
+        "type": "debug",
+        "z": "4571375.9cd3bc8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 230,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "5533b5ca.634e34",
+        "type": "http in",
+        "z": "4571375.9cd3bc8",
+        "name": "(root)",
+        "url": "/searchcamp",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 70,
+        "y": 420,
+        "wires": [
+            [
+                "cd09fa41.c98698",
+                "3a446ffa.ee5ef8"
+            ]
+        ]
+    },
+    {
+        "id": "91581099.fd3e",
+        "type": "function",
+        "z": "4571375.9cd3bc8",
+        "name": "html header",
+        "func": "// For HTML use the content type line below:\nmsg.headers={\"Content-Type\":\"text/html\"}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 420,
+        "wires": [
+            [
+                "79783287.2c5924"
+            ]
+        ]
+    },
+    {
+        "id": "db2ff2e4.b8864",
+        "type": "http in",
+        "z": "4571375.9cd3bc8",
+        "name": "/artists",
+        "url": "searchcamp/api/artists",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 70,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cd09fa41.c98698",
+        "type": "file in",
+        "z": "4571375.9cd3bc8",
+        "name": "index.html",
+        "filename": "C:\\Leo\\IoT\\bandcamp\\node-red\\index.html",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 320,
+        "y": 420,
+        "wires": [
+            [
+                "91581099.fd3e"
+            ]
+        ]
+    },
+    {
+        "id": "56c56f0b.998ba8",
+        "type": "debug",
+        "z": "4571375.9cd3bc8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 330,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "79783287.2c5924",
+        "type": "http response",
+        "z": "4571375.9cd3bc8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 670,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "8e6cb0b3.5c7228",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "C:\\Leo\\IoT\\bandcamp\\bandcamp.sqlite",
+        "mode": "RWC"
+    }
+]
