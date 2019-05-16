@@ -14,40 +14,46 @@
         <table id="tags">
         </table>
 
-        <label for="tagsselect">choose a tag</label>
-        <select multiple="" class="form-control" id="tagsselect">
-        </select>
+        <label for="tagsleft">choose a tag</label>
+        <select id="tagsleft" multiple="" class="form-control"></select>
+
+        <label for="tagsright">choose another tag</label>
+        <select id="tagsright" multiple="" class="form-control"></select>
     </div>
 
 <script type="text/javascript">
+
+// Ajax errors handler
+$.ajaxError = function(jqxhr, textStatus, error) {
+  var err = textStatus + ", " + error;
+  console.log("Request Failed: " + err);
+}
 
 // DocumentReady
 $(function() {
 
     // select listener
-    $("#tagsselect").on('change', function() {
-        var selectedValues = $('#tagsselect').val();
-        console.log(selectedValues);
-        $.each(selectedValues, function(i, field) {
+    $("#tagsleft").on('change', function() {
+        $("#tagsright").empty();
+        var postBody = 'tags=' + JSON.stringify($('#tagsleft').val());
+        $.post("/searchcamp/api/tags", postBody, function(result) {
+            // iterating through results
+            $.each(result, function(i, field) {
+                // populating tagsleft
+                $("#tagsright").append('<option value="' + field.Tag + '">' + field.Tag + ' (' + field.c + ')</option>');
+            });
 
-            // populating table
-            $("#tags").append("<tr><td>" + field + "</td></tr>");
-        });
+        }, 'json')
+        .fail($.ajaxError);
     });
 
     $.getJSON("/searchcamp/api/tags")
     .done(function(result) {
-        if (0 == result.length) { // no results
-
-        }
-        else {
-            // iterating through results
-            $.each(result, function(i, field) {
-
-                //$("#tags").append("<tr><td>" + field.Tag + "</td><td>" + field.c + "</td></tr>");
-                $("#tagsselect").append('<option value="' + field.Tag + '">' + field.Tag + ' (' + field.c + ')</option>');
-            });
-        }
+        // iterating through results
+        $.each(result, function(i, field) {
+            // populating tagsleft
+            $("#tagsleft").append('<option value="' + field.Tag + '">' + field.Tag + ' (' + field.c + ')</option>');
+        });
     })
     .fail($.ajaxError);
 });
