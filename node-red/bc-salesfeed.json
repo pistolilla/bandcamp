@@ -323,7 +323,7 @@
         "type": "function",
         "z": "20d79de8.cb11ea",
         "name": "INSERT",
-        "func": "// normalizing tag\nvar artist = msg.payload.artist.replace(/'/gi, /''/);\nvar album = msg.payload.item.replace(/'/gi, /''/);\n\n// SQL Query\nmsg.topic = `INSERT OR IGNORE INTO url_info (\n    Url,\n    Artist,\n    Album\n) VALUES (\n    '${msg.payload.url}',\n    '${artist}',\n    '${album}'\n)`;\nreturn msg;",
+        "func": "// normalizing tag\nvar artist = msg.payload.artist.replace(/'/gi, \"''\");\nvar album = msg.payload.item.replace(/'/gi, \"''\");\n\n// SQL Query\nmsg.topic = `INSERT OR IGNORE INTO url_info (\n    Url,\n    Artist,\n    Album\n) VALUES (\n    '${msg.payload.url}',\n    '${artist}',\n    '${album}'\n)`;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 600,
