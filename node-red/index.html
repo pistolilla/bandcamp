@@ -4,32 +4,50 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/journal/bootstrap.min.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <style>
+            /* select { height: 100%; } */
+        </style>
     </head>
     <body>
 
     <div class="content">
         <table id="tags">
         </table>
+
+        <label for="tagsselect">choose a tag</label>
+        <select multiple="" class="form-control" id="tagsselect">
+        </select>
     </div>
 
 <script type="text/javascript">
 
-// main() aka DocumentReady
+// DocumentReady
 $(function() {
+
+    // select listener
+    $("#tagsselect").on('change', function() {
+        var selectedValues = $('#tagsselect').val();
+        console.log(selectedValues);
+        $.each(selectedValues, function(i, field) {
+
+            // populating table
+            $("#tags").append("<tr><td>" + field + "</td></tr>");
+        });
+    });
 
     $.getJSON("/searchcamp/api/tags")
     .done(function(result) {
-    if (0 == result.length) { // no results
+        if (0 == result.length) { // no results
 
-    }
-    else {
-        // iterating through results
-        $.each(result, function(i, field) {
+        }
+        else {
+            // iterating through results
+            $.each(result, function(i, field) {
 
-        // populating table #redes
-        $("#tags").append("<tr><td>" + field.Tag + "</td><td>" + field.c + "</td></tr>");
-        });
-    }
+                //$("#tags").append("<tr><td>" + field.Tag + "</td><td>" + field.c + "</td></tr>");
+                $("#tagsselect").append('<option value="' + field.Tag + '">' + field.Tag + ' (' + field.c + ')</option>');
+            });
+        }
     })
     .fail($.ajaxError);
 });
