@@ -8,27 +8,12 @@
             "356c3f3c.2b49d"
         ],
         "x": 35,
-        "y": 100,
+        "y": 80,
         "wires": [
             [
-                "23981b54.11294c"
+                "57a445e1.67fa84"
             ]
         ]
-    },
-    {
-        "id": "f3ae3a0b.f7156",
-        "type": "debug",
-        "z": "f7bedccb.0c56f",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "x": 730,
-        "y": 300,
-        "wires": []
     },
     {
         "id": "e5d1b8ad.2d0f58",
@@ -36,7 +21,7 @@
         "z": "f7bedccb.0c56f",
         "name": "",
         "scope": null,
-        "x": 600,
+        "x": 540,
         "y": 40,
         "wires": [
             [
@@ -54,7 +39,7 @@
         "console": false,
         "tostatus": false,
         "complete": "true",
-        "x": 730,
+        "x": 670,
         "y": 40,
         "wires": []
     },
@@ -70,8 +55,8 @@
         "tls": "",
         "proxy": "",
         "authType": "basic",
-        "x": 610,
-        "y": 220,
+        "x": 250,
+        "y": 260,
         "wires": [
             [
                 "c40242c5.9f0dd"
@@ -79,29 +64,13 @@
         ]
     },
     {
-        "id": "23981b54.11294c",
-        "type": "function",
-        "z": "f7bedccb.0c56f",
-        "name": "url params",
-        "func": "// normalizing url\nvar url = msg.payload.url.replace(/^(https?:)?\\/\\//i, \"https://\");\n\nreturn { url: url };",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 450,
-        "y": 220,
-        "wires": [
-            [
-                "bfbbc110.4c8e8"
-            ]
-        ]
-    },
-    {
         "id": "70c5dadd.57d2e4",
         "type": "comment",
         "z": "f7bedccb.0c56f",
-        "name": "read and parse html",
+        "name": "read html",
         "info": "",
-        "x": 470,
-        "y": 180,
+        "x": 240,
+        "y": 220,
         "wires": []
     },
     {
@@ -114,11 +83,11 @@
         "tag": "a.tag",
         "ret": "text",
         "as": "multi",
-        "x": 530,
-        "y": 320,
+        "x": 410,
+        "y": 260,
         "wires": [
             [
-                "f3ae3a0b.f7156"
+                "681f2acf.db6efc"
             ]
         ]
     },
@@ -128,18 +97,163 @@
         "z": "f7bedccb.0c56f",
         "name": "css select",
         "info": "",
-        "x": 520,
-        "y": 280,
+        "x": 400,
+        "y": 220,
         "wires": []
     },
     {
         "id": "38285907.dedd4e",
         "type": "comment",
         "z": "f7bedccb.0c56f",
-        "name": "check if already scraped",
+        "name": "check if not in db",
         "info": "",
-        "x": 170,
-        "y": 60,
+        "x": 160,
+        "y": 120,
         "wires": []
+    },
+    {
+        "id": "6b33a8cc.89b96",
+        "type": "function",
+        "z": "f7bedccb.0c56f",
+        "name": "SELECT",
+        "func": "// SQL Query\nmsg.topic = `SELECT COUNT(*) AS result\n    FROM url_tag WHERE Url = '${msg.url}'\n`;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "1eb1c8ca.6c416f"
+            ]
+        ]
+    },
+    {
+        "id": "1eb1c8ca.6c416f",
+        "type": "sqlite",
+        "z": "f7bedccb.0c56f",
+        "mydb": "8e6cb0b3.5c7228",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "db",
+        "x": 270,
+        "y": 160,
+        "wires": [
+            [
+                "228516d2.10df7a"
+            ]
+        ]
+    },
+    {
+        "id": "228516d2.10df7a",
+        "type": "switch",
+        "z": "f7bedccb.0c56f",
+        "name": "not in db?",
+        "property": "payload[0].result",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 400,
+        "y": 160,
+        "wires": [
+            [
+                "bfbbc110.4c8e8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "681f2acf.db6efc",
+        "type": "function",
+        "z": "f7bedccb.0c56f",
+        "name": "INSERT",
+        "func": "// normalizing tag\nvar tag = msg.payload.replace(/'/gi, /''/).toLowerCase();\n\n// SQL Query\nmsg.topic = `INSERT OR IGNORE INTO url_tag (\n    Url,\n    Tag\n) VALUES (\n    '${msg.url}',\n    '${tag}'\n)`;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 480,
+        "y": 340,
+        "wires": [
+            [
+                "2c76582b.4ad51"
+            ]
+        ]
+    },
+    {
+        "id": "2c76582b.4ad51",
+        "type": "sqlite",
+        "z": "f7bedccb.0c56f",
+        "mydb": "8e6cb0b3.5c7228",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "db",
+        "x": 610,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "53b5184c.2ee498",
+        "type": "comment",
+        "z": "f7bedccb.0c56f",
+        "name": "read stream from salesfeed",
+        "info": "",
+        "x": 140,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "89b6281.94d9ad8",
+        "type": "comment",
+        "z": "f7bedccb.0c56f",
+        "name": "write tags in db",
+        "info": "",
+        "x": 500,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "57a445e1.67fa84",
+        "type": "change",
+        "z": "f7bedccb.0c56f",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.url",
+                "pt": "msg",
+                "to": "url",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "6b33a8cc.89b96"
+            ]
+        ]
+    },
+    {
+        "id": "8e6cb0b3.5c7228",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "C:\\Leo\\IoT\\bandcamp\\bandcamp.sqlite",
+        "mode": "RWC"
     }
 ]

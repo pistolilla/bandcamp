@@ -115,21 +115,6 @@
         ]
     },
     {
-        "id": "5215f949.21d1c8",
-        "type": "debug",
-        "z": "20d79de8.cb11ea",
-        "name": "",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "x": 650,
-        "y": 360,
-        "wires": []
-    },
-    {
         "id": "1b4f4b17.17f155",
         "type": "change",
         "z": "20d79de8.cb11ea",
@@ -181,8 +166,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 290,
-        "y": 260,
+        "x": 410,
+        "y": 220,
         "wires": [
             [
                 "904cc0bf.89ece"
@@ -225,8 +210,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 450,
-        "y": 260,
+        "x": 570,
+        "y": 220,
         "wires": [
             [
                 "bed1c570.258448"
@@ -241,8 +226,8 @@
         "links": [
             "5734163f.7a7458"
         ],
-        "x": 615,
-        "y": 400,
+        "x": 555,
+        "y": 360,
         "wires": []
     },
     {
@@ -276,8 +261,8 @@
         "arraySpltType": "len",
         "stream": false,
         "addname": "",
-        "x": 350,
-        "y": 320,
+        "x": 130,
+        "y": 300,
         "wires": [
             [
                 "824a4603.ed4798"
@@ -288,23 +273,23 @@
         "id": "e59fbae3.001408",
         "type": "comment",
         "z": "20d79de8.cb11ea",
-        "name": "stream only albums",
+        "name": "only albums",
         "info": "",
-        "x": 530,
-        "y": 320,
+        "x": 290,
+        "y": 280,
         "wires": []
     },
     {
         "id": "824a4603.ed4798",
         "type": "switch",
         "z": "20d79de8.cb11ea",
-        "name": "loose track?",
+        "name": "is album?",
         "property": "payload.url",
         "propertyType": "msg",
         "rules": [
             {
                 "t": "cont",
-                "v": "bandcamp.com/track",
+                "v": "/album/",
                 "vt": "str"
             },
             {
@@ -314,15 +299,92 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 510,
-        "y": 360,
+        "x": 280,
+        "y": 320,
         "wires": [
             [
-                "5215f949.21d1c8"
+                "f7d4b565.14575"
             ],
+            []
+        ]
+    },
+    {
+        "id": "ed7d0d4b.39df98",
+        "type": "comment",
+        "z": "20d79de8.cb11ea",
+        "name": "write tags in db and stream",
+        "info": "",
+        "x": 650,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "8ef93175.8cf598",
+        "type": "function",
+        "z": "20d79de8.cb11ea",
+        "name": "INSERT",
+        "func": "// normalizing tag\nvar artist = msg.payload.artist.replace(/'/gi, /''/);\nvar album = msg.payload.item.replace(/'/gi, /''/);\n\n// SQL Query\nmsg.topic = `INSERT OR IGNORE INTO url_info (\n    Url,\n    Artist,\n    Album\n) VALUES (\n    '${msg.payload.url}',\n    '${artist}',\n    '${album}'\n)`;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 600,
+        "y": 320,
+        "wires": [
             [
-                "356c3f3c.2b49d"
+                "1dc49557.2a2a33"
             ]
         ]
+    },
+    {
+        "id": "1dc49557.2a2a33",
+        "type": "sqlite",
+        "z": "20d79de8.cb11ea",
+        "mydb": "8e6cb0b3.5c7228",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "db",
+        "x": 730,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f7d4b565.14575",
+        "type": "function",
+        "z": "20d79de8.cb11ea",
+        "name": "normalize url",
+        "func": "// normalizing url\nmsg.payload.url = msg.payload.url.replace(/^(https?:)?\\/\\//i, \"https://\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 430,
+        "y": 320,
+        "wires": [
+            [
+                "8ef93175.8cf598",
+                "356c3f3c.2b49d",
+                "e3c4358c.612668"
+            ]
+        ]
+    },
+    {
+        "id": "e3c4358c.612668",
+        "type": "debug",
+        "z": "20d79de8.cb11ea",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 610,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "8e6cb0b3.5c7228",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "C:\\Leo\\IoT\\bandcamp\\bandcamp.sqlite",
+        "mode": "RWC"
     }
 ]
