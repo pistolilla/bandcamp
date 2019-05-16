@@ -1,24 +1,31 @@
 <html>
     <head>
-        <title>Hola amigos</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/journal/bootstrap.min.css">
+        <title>Searchcamp</title>
+        <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/journal/bootstrap.min.css"> -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/simplex/bootstrap.min.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <style>
             /* select { height: 100%; } */
+            .loadinggif {
+                display: block;
+                margin: 10px auto;
+                width: 48;
+            }
         </style>
     </head>
     <body>
 
     <div class="content">
-        <table id="tags">
-        </table>
-
-        <label for="tagsleft">choose a tag</label>
+        <label for="tagsleft">1. Choose a tag</label>
         <select id="tagsleft" multiple="" class="form-control"></select>
 
-        <label for="tagsright">choose another tag</label>
+        <label for="tagsright">2. Choose another tag</label>
+        <img id="tagsrightgif" class="loadinggif" src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif" loop="infinite" />
         <select id="tagsright" multiple="" class="form-control"></select>
+
+        <img id="artistsgif" class="loadinggif" src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif" loop="infinite" />
+        <div id="artists" class="list-group"></ul>
     </div>
 
 <script type="text/javascript">
@@ -32,9 +39,25 @@ $.ajaxError = function(jqxhr, textStatus, error) {
 // DocumentReady
 $(function() {
 
-    // select listener
+    // init
+    $('.loadinggif').hide();
+
+    // fetching initial tags
+    $.getJSON("/searchcamp/api/tags")
+    .done(function(result) {
+        // iterating through results
+        $.each(result, function(i, field) {
+            // populating tagsleft
+            $("#tagsleft").append('<option value="' + field.Tag + '">' + field.Tag + ' (' + field.c + ')</option>');
+        });
+    })
+    .fail($.ajaxError);
+
+    // tags left listener
     $("#tagsleft").on('change', function() {
-        $("#tagsright").empty();
+        // clearing
+        $("#tagsright, #artists").empty();
+        // creating JSON object from select
         var postBody = 'tags=' + JSON.stringify($('#tagsleft').val());
         $.post("/searchcamp/api/tags", postBody, function(result) {
             // iterating through results
@@ -47,15 +70,26 @@ $(function() {
         .fail($.ajaxError);
     });
 
-    $.getJSON("/searchcamp/api/tags")
-    .done(function(result) {
-        // iterating through results
-        $.each(result, function(i, field) {
-            // populating tagsleft
-            $("#tagsleft").append('<option value="' + field.Tag + '">' + field.Tag + ' (' + field.c + ')</option>');
-        });
-    })
-    .fail($.ajaxError);
+    // right tags listener
+    $("#tagsright").on('change', function() {
+        // clearing
+        $("#artists").empty();
+        $('#artistsgif').show();
+        // creating JSON object from select
+        var tags1 = $('#tagsleft').val();
+        var tags2 = $('#tagsright').val();
+        var postBody = 'tags=' + JSON.stringify({ tags1, tags2 });
+        $.post("/searchcamp/api/artists", postBody, function(result) {
+            $('#artistsgif').hide();
+            //iterating through results
+            $.each(result, function(i, field) {
+                // populating artists
+                $("#artists").append('<a href="' + field.Url + '" target="_blank" class="list-group-item list-group-item-action flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">' + field.Artist + '</h5><small><span class="badge badge-pill badge-primary">' + field.c + '</span></small></div><p class="mb-1">' + field.Album + '</p><small>' + field.Tags + '</small></a>');
+            });
+
+        }, 'json')
+        .fail($.ajaxError);
+    });
 });
 </script>
 
