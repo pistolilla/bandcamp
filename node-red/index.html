@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Hola amigos</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/journal/bootstrap.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <body>
+
+    <div class="content">
+        <table id="tags">
+        </table>
+    </div>
+
+<script type="text/javascript">
+
+// main() aka DocumentReady
+$(function() {
+
+    $.getJSON("/searchcamp/api/tags")
+    .done(function(result) {
+    if (0 == result.length) { // no results
+
+    }
+    else {
+        // iterating through results
+        $.each(result, function(i, field) {
+
+        // populating table #redes
+        $("#tags").append("<tr><td>" + field.Tag + "</td><td>" + field.c + "</td></tr>");
+        });
+    }
+    })
+    .fail($.ajaxError);
+});
+</script>
+
+    </body>
+</html>
