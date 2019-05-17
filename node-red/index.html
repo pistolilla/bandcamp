@@ -4,8 +4,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Searchcamp</title>
         <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootswatch/4.3.1/simplex/bootstrap.min.css">
-        <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <style>
             select {
                 height: 100px;
@@ -21,6 +21,7 @@
     </head>
     <body>
 
+    <!-- navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a href="?" class="navbar-brand">Searchcamp <small>(beta)</small></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,12 +31,20 @@
         <div class="collapse navbar-collapse" id="navbarColor02">
             <ul class="navbar-nav  ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="?about=1">About</a>
                 </li>
             </ul>
         </div>
     </nav>
 
+    <!-- about box -->
+    <div id="aboutbox" class="alert alert-dismissible alert-primary m-2">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Searchcamp</strong> helps you searching into <a href="https://bandcamp.com" target="_blank">Bandcamp</a> using the confluence of 2 tags (or more). Results are taken from the albums purchased in the last days. <br />
+        Select a tag from each box to check it out.
+    </div>
+
+    <!-- content -->
     <div class="row m-1">
         <div class="col-sm-6 col-md-3 col-lg-2 p-1">
             <div class="card border-primary">
@@ -49,7 +58,6 @@
                 <select id="tagsright" multiple=""></select>
             </div>
         </div>
-
         <div class="col-sm-12 col-md-6 col-lg-8 p-1">
             <div class="list-group">
                 <div class="list-group-item list-group-item-action active">Results</a>
@@ -58,10 +66,14 @@
             <div id="artists" class="list-group"></ul>
         </div>
     </div>
-<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script> -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <script type="text/javascript">
 
+// Read URL parameters
+$.urlParam = function (name) {
+  var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.search);
+  return (results !== null) ? decodeURI(results[1]) || 0 : false;
+}
 // Ajax errors handler
 $.ajaxError = function(jqxhr, textStatus, error) {
   var err = textStatus + ", " + error;
@@ -73,9 +85,12 @@ $(function() {
 
     // init
     $('.loadinggif').hide();
+    // if about undefined
+    if ($.urlParam('about') == 0)
+        $('#aboutbox').hide();
 
     // fetching initial tags
-    $.getJSON("/searchcamp/api/tags")
+    $.getJSON("api/tags")
     .done(function(result) {
         // iterating through results
         $.each(result, function(i, field) {
@@ -91,7 +106,7 @@ $(function() {
         $("#tagsright, #artists").empty();
         // creating JSON object from select
         var postBody = 'tags=' + JSON.stringify($('#tagsleft').val());
-        $.post("/searchcamp/api/tags", postBody, function(result) {
+        $.post("api/tags", postBody, function(result) {
             // iterating through results
             $.each(result, function(i, field) {
                 // populating tagsleft
@@ -111,7 +126,7 @@ $(function() {
         var tags1 = $('#tagsleft').val();
         var tags2 = $('#tagsright').val();
         var postBody = 'tags=' + JSON.stringify({ tags1, tags2 });
-        $.post("/searchcamp/api/artists", postBody, function(result) {
+        $.post("api/artists", postBody, function(result) {
             $('#artistsgif').hide();
             //iterating through results
             $.each(result, function(i, field) {
