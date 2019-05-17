@@ -384,7 +384,7 @@
         "id": "8e6cb0b3.5c7228",
         "type": "sqlitedb",
         "z": "",
-        "db": "C:\\Leo\\IoT\\bandcamp\\bandcamp.sqlite",
+        "db": "C:\\Leo\\IoT\\searchcamp\\searchcamp.sqlite",
         "mode": "RWC"
     }
 ]

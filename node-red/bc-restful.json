@@ -35,8 +35,8 @@
         "sqlquery": "msg.topic",
         "sql": "",
         "name": "db",
-        "x": 410,
-        "y": 120,
+        "x": 390,
+        "y": 140,
         "wires": [
             [
                 "12ca964e.34ac6a"
@@ -53,7 +53,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 90,
-        "y": 100,
+        "y": 80,
         "wires": [
             [
                 "15cac769.992621"
@@ -68,8 +68,8 @@
         "func": "msg.topic = `SELECT tag, COUNT(*) AS c\n    FROM url_tag\n    GROUP BY tag\n    HAVING c > 2\n    ORDER BY c DESC`;\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 260,
-        "y": 100,
+        "x": 240,
+        "y": 80,
         "wires": [
             [
                 "fe0b51d9.f20598"
@@ -84,7 +84,7 @@
         "statusCode": "",
         "headers": {},
         "x": 690,
-        "y": 120,
+        "y": 180,
         "wires": []
     },
     {
@@ -94,7 +94,7 @@
         "name": "listen to RESTful methods",
         "info": "",
         "x": 130,
-        "y": 60,
+        "y": 40,
         "wires": []
     },
     {
@@ -105,8 +105,8 @@
         "func": "// If sending JSON data the content type is:\nmsg.headers={\"Content-Type\":\"application/json\"}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 550,
-        "y": 120,
+        "x": 530,
+        "y": 140,
         "wires": [
             [
                 "a651ac96.c4241"
@@ -123,7 +123,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 90,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "3397553c.88d29a"
@@ -138,29 +138,13 @@
         "func": "// parsing body params\nvar tagsArray = JSON.parse(msg.req.body.tags);\nvar tagsStr = \"'\" + tagsArray.join(\"', '\") + \"'\";\n\n// SQL query\nmsg.topic = `SELECT Tag, COUNT(*) AS c\n    FROM url_tag\n    WHERE Url IN (\n        SELECT Url FROM url_tag\n        WHERE Tag IN (${tagsStr})\n    )\n    AND Tag NOT IN (${tagsStr})\n    GROUP BY Tag\n    ORDER BY c DESC`;\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 260,
-        "y": 140,
+        "x": 240,
+        "y": 120,
         "wires": [
             [
-                "fe0b51d9.f20598",
-                "56c56f0b.998ba8"
+                "fe0b51d9.f20598"
             ]
         ]
-    },
-    {
-        "id": "3a446ffa.ee5ef8",
-        "type": "debug",
-        "z": "4571375.9cd3bc8",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "x": 230,
-        "y": 500,
-        "wires": []
     },
     {
         "id": "5533b5ca.634e34",
@@ -172,11 +156,10 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 70,
-        "y": 420,
+        "y": 240,
         "wires": [
             [
-                "cd09fa41.c98698",
-                "3a446ffa.ee5ef8"
+                "cd09fa41.c98698"
             ]
         ]
     },
@@ -188,11 +171,11 @@
         "func": "// For HTML use the content type line below:\nmsg.headers={\"Content-Type\":\"text/html\"}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 470,
-        "y": 420,
+        "x": 530,
+        "y": 240,
         "wires": [
             [
-                "79783287.2c5924"
+                "a651ac96.c4241"
             ]
         ]
     },
@@ -206,9 +189,11 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 70,
-        "y": 280,
+        "y": 180,
         "wires": [
-            []
+            [
+                "e75a0f2e.8a857"
+            ]
         ]
     },
     {
@@ -216,13 +201,13 @@
         "type": "file in",
         "z": "4571375.9cd3bc8",
         "name": "index.html",
-        "filename": "C:\\Leo\\IoT\\bandcamp\\node-red\\index.html",
+        "filename": "C:\\Leo\\IoT\\bandcamp\\searchcamp\\index.html",
         "format": "utf8",
         "chunk": false,
         "sendError": false,
         "encoding": "none",
-        "x": 320,
-        "y": 420,
+        "x": 380,
+        "y": 240,
         "wires": [
             [
                 "91581099.fd3e"
@@ -230,36 +215,26 @@
         ]
     },
     {
-        "id": "56c56f0b.998ba8",
-        "type": "debug",
+        "id": "e75a0f2e.8a857",
+        "type": "function",
         "z": "4571375.9cd3bc8",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "x": 330,
-        "y": 300,
-        "wires": []
-    },
-    {
-        "id": "79783287.2c5924",
-        "type": "http response",
-        "z": "4571375.9cd3bc8",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 670,
-        "y": 420,
-        "wires": []
+        "name": "SELECT",
+        "func": "// parsing body params\nvar tagsObj = JSON.parse(msg.req.body.tags);\nvar tagsStr1 = \"'\" + tagsObj.tags1.join(\"', '\") + \"'\";\nvar tagsStr2 = \"'\" + tagsObj.tags2.join(\"', '\") + \"'\";\n\n// SQL query\nmsg.topic = `SELECT Url, Artist, Album, c, GROUP_CONCAT(Tag, ', ') AS Tags\n    FROM (\n        SELECT url_info.rowid, Url, Artist, Album, COUNT(Album) AS c, Tag\n        FROM url_info\n            LEFT JOIN url_tag USING(Url)\n        WHERE Url IN (\n            SELECT Url FROM url_tag\n            WHERE Tag IN (${tagsStr1})\n        )\n        AND Url IN (\n            SELECT Url FROM url_tag\n            WHERE Tag IN (${tagsStr2})\n        )\n        GROUP BY Artist, Tag\n    )\n    GROUP BY Artist\n    ORDER BY c DESC, rowid DESC`;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 240,
+        "y": 180,
+        "wires": [
+            [
+                "fe0b51d9.f20598"
+            ]
+        ]
     },
     {
         "id": "8e6cb0b3.5c7228",
         "type": "sqlitedb",
         "z": "",
-        "db": "C:\\Leo\\IoT\\bandcamp\\bandcamp.sqlite",
+        "db": "C:\\Leo\\IoT\\searchcamp\\searchcamp.sqlite",
         "mode": "RWC"
     }
 ]
