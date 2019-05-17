@@ -1,11 +1,17 @@
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Searchcamp</title>
         <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootswatch/4.3.1/simplex/bootstrap.min.css">
         <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <style>
-            /* select { height: 100%; } */
+            select {
+                height: 100px;
+                resize: vertical;
+                overflow: auto;
+            }
             .loadinggif {
                 display: block;
                 margin: 10px auto;
@@ -30,23 +36,21 @@
         </div>
     </nav>
 
-    <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-4">
-            <div xclass="col-sm-12 col-md-6">
-                <div class="card border-primary mb-0">
-                    <div class="card-header">1. Choose a tag</div>
-                    <select id="tagsleft" multiple="" class="form-control"></select>
-                </div>
+    <div class="row m-1">
+        <div class="col-sm-6 col-md-3 col-lg-2 p-1">
+            <div class="card border-primary">
+                <div class="card-header">1. Choose a tag</div>
+                <select id="tagsleft" multiple=""></select>
             </div>
-            <div xclass="col-sm-12 col-md-6">
-                <div class="card border-primary mb-0">
-                    <div class="card-header">2. Choose another tag</div>
-                    <select id="tagsright" multiple="" class="form-control"></select>
-                </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2 p-1">
+            <div class="card border-primary">
+                <div class="card-header">2. Another tag</div>
+                <select id="tagsright" multiple=""></select>
             </div>
         </div>
 
-        <div class="col-sm-12 col-md-6 col-lg-8">
+        <div class="col-sm-12 col-md-6 col-lg-8 p-1">
             <div class="list-group">
                 <div class="list-group-item list-group-item-action active">Results</a>
             </div>
@@ -54,7 +58,7 @@
             <div id="artists" class="list-group"></ul>
         </div>
     </div>
-
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script> -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
