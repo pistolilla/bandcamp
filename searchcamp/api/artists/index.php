@@ -37,7 +37,7 @@ $sql = "SELECT Url, Artist, Album, c, GROUP_CONCAT(Tag, ', ') AS Tags
             GROUP BY Artist, Tag
         )
         GROUP BY Artist
-        ORDER BY c DESC, rowid DESC";
+        ORDER BY rowid DESC";
 
 $res = $db->query($sql);
 
