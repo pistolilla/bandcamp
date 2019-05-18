@@ -90,7 +90,7 @@ $(function() {
         $('#aboutbox').hide();
 
     // fetching initial tags
-    $.getJSON("api/tags")
+    $.getJSON("api/tags/")
     .done(function(result) {
         // iterating through results
         $.each(result, function(i, field) {
@@ -106,7 +106,7 @@ $(function() {
         $("#tagsright, #artists").empty();
         // creating JSON object from select
         var postBody = 'tags=' + JSON.stringify($('#tagsleft').val());
-        $.post("api/tags", postBody, function(result) {
+        $.post("api/tags/", postBody, function(result) {
             // iterating through results
             $.each(result, function(i, field) {
                 // populating tagsleft
@@ -126,7 +126,7 @@ $(function() {
         var tags1 = $('#tagsleft').val();
         var tags2 = $('#tagsright').val();
         var postBody = 'tags=' + JSON.stringify({ tags1, tags2 });
-        $.post("api/artists", postBody, function(result) {
+        $.post("api/artists/", postBody, function(result) {
             $('#artistsgif').hide();
             //iterating through results
             $.each(result, function(i, field) {
