@@ -49,14 +49,14 @@
         <div class="col-sm-6 col-md-3 col-lg-2 p-1">
             <div class="card border-primary">
                 <div class="card-header">1. Choose a tag</div>
-                <input id="filterleft" class="form-control-sm" type="text" placeholder="Filter..">
+                <input id="filterleft" class="form-control-sm tagfilter" type="text" placeholder="Filter..">
                 <select id="tagsleft" multiple=""></select>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2 p-1">
             <div class="card border-primary">
                 <div class="card-header">2. Another tag</div>
-                <input id="filterright" class="form-control-sm" type="text" placeholder="Filter..">
+                <input id="filterright" class="form-control-sm tagfilter" type="text" placeholder="Filter..">
                 <select id="tagsright" multiple=""></select>
             </div>
         </div>
@@ -87,6 +87,7 @@ $(function() {
 
     //// init
     $('.loadinggif').hide();
+    $(".filter").val("");
     // if about undefined
     if ($.urlParam('about') == 0)
         $('#aboutbox').hide();
@@ -109,7 +110,10 @@ $(function() {
         $("#filterright").val("");
         $("#tagsright, #artists").empty();
         // creating JSON object from select
-        var postBody = 'tags=' + JSON.stringify($('#tagsleft').val());
+        var tags = $('#tagsleft').val();
+        // encoding for http
+        tags = tags.map(x => encodeURIComponent(x));
+        var postBody = 'tags=' + JSON.stringify(tags);
         $.post("api/tags/", postBody, function(result) {
             // iterating through results
             $.each(result, function(i, field) {
@@ -129,8 +133,12 @@ $(function() {
         // creating JSON object from select
         var tags1 = $('#tagsleft').val();
         var tags2 = $('#tagsright').val();
+        // encoding for http
+        tags1 = tags1.map(x => encodeURIComponent(x));
+        tags2 = tags2.map(x => encodeURIComponent(x));
         //console.log(tags2);
         var postBody = 'tags=' + JSON.stringify({ tags1, tags2 });
+        //console.log(postBody);
         $.post("api/artists/", postBody, function(result) {
             $('#artistsgif').hide();
             //iterating through results
