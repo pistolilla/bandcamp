@@ -49,12 +49,14 @@
         <div class="col-sm-6 col-md-3 col-lg-2 p-1">
             <div class="card border-primary">
                 <div class="card-header">1. Choose a tag</div>
+                <input id="filterleft" class="form-control-sm" type="text" placeholder="Filter..">
                 <select id="tagsleft" multiple=""></select>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2 p-1">
             <div class="card border-primary">
                 <div class="card-header">2. Another tag</div>
+                <input id="filterright" class="form-control-sm" type="text" placeholder="Filter..">
                 <select id="tagsright" multiple=""></select>
             </div>
         </div>
@@ -83,12 +85,13 @@ $.ajaxError = function(jqxhr, textStatus, error) {
 // DocumentReady
 $(function() {
 
-    // init
+    //// init
     $('.loadinggif').hide();
     // if about undefined
     if ($.urlParam('about') == 0)
         $('#aboutbox').hide();
 
+    //// ajax
     // fetching initial tags
     $.getJSON("api/tags/")
     .done(function(result) {
@@ -137,6 +140,22 @@ $(function() {
         }, 'json')
         .fail($.ajaxError);
     });
+
+    //// filters
+    $("#filterleft").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#tagsleft option").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    $("#filterright").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#tagsright option").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
 });
 </script>
 
