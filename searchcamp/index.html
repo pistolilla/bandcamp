@@ -106,6 +106,7 @@ $(function() {
     // tags left listener
     $("#tagsleft").on('change', function() {
         // clearing
+        $("#filterright").val("");
         $("#tagsright, #artists").empty();
         // creating JSON object from select
         var postBody = 'tags=' + JSON.stringify($('#tagsleft').val());
@@ -128,6 +129,7 @@ $(function() {
         // creating JSON object from select
         var tags1 = $('#tagsleft').val();
         var tags2 = $('#tagsright').val();
+        //console.log(tags2);
         var postBody = 'tags=' + JSON.stringify({ tags1, tags2 });
         $.post("api/artists/", postBody, function(result) {
             $('#artistsgif').hide();
@@ -145,14 +147,14 @@ $(function() {
     $("#filterleft").on("keyup", function() {
         var value = $(this).val().toLowerCase();
         $("#tagsleft option").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
 
     $("#filterright").on("keyup", function() {
         var value = $(this).val().toLowerCase();
         $("#tagsright option").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
 
