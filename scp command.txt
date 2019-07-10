@@ -1,0 +1,2 @@
+cd C:\Users\usuario\Desktop
+pscp pi@192.168.1.69:/media/pi/5DC5-96A7/searchcamp/searchcamp.sqlite .

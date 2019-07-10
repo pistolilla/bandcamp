@@ -8,11 +8,14 @@ $db = new MyDB();
 
 // GET
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $sql = "SELECT tag, COUNT(*) AS c
-            FROM url_tag
-            GROUP BY tag
-            HAVING c > 2
-            ORDER BY c DESC";
+    // $sql = "SELECT tag, COUNT(*) AS c
+    //         FROM url_tag
+    //         GROUP BY tag
+    //         HAVING c > 2
+    //         ORDER BY c DESC";
+    $sql = "SELECT Tag, Count AS c
+            FROM tag_count
+            WHERE c > 3";
 }
 // POST
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {

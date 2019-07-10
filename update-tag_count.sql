@@ -1,0 +1,6 @@
+DELETE FROM tag_count WHERE 1;
+INSERT INTO tag_count
+SELECT tag, COUNT(*) AS c
+FROM url_tag
+GROUP BY tag
+ORDER BY c DESC;
